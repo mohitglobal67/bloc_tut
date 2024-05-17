@@ -12,13 +12,12 @@ class CounterApp extends StatefulWidget {
 class _CounterAppState extends State<CounterApp> {
   bool check = true;
 
-  TextEditingController _email = TextEditingController();
-  TextEditingController _password = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
 
   List<String> drop = ["qww", "delkml", "cednklmnl", "ednj", "ednkn"];
   @override
   Widget build(BuildContext context) {
-    print("dbhjldbji");
     return Scaffold(
         appBar: AppBar(
           title: const Text("Counter"),
@@ -38,7 +37,6 @@ class _CounterAppState extends State<CounterApp> {
                     padding: const EdgeInsets.all(20.0),
                     child: TextField(
                       onChanged: (value) {
-                        print(_email);
                         context
                             .read<CounterBloc>()
                             .add(SignInfiledCheck(_email.text, _password.text));
@@ -49,11 +47,21 @@ class _CounterAppState extends State<CounterApp> {
                   );
                 },
               ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: TextField(
-                  decoration: InputDecoration(hintText: "Enter Password"),
-                ),
+              BlocBuilder<CounterBloc, CounterState>(
+                builder: (context, state) {
+                  return Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      onChanged: (value) {
+                        context
+                            .read<CounterBloc>()
+                            .add(SignInfiledCheck(_email.text, _password.text));
+                      },
+                      controller: _password,
+                      decoration: InputDecoration(hintText: "Enter Passwprd"),
+                    ),
+                  );
+                },
               ),
               BlocBuilder<CounterBloc, CounterState>(
                 builder: (context, state) {

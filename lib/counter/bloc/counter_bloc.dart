@@ -1,6 +1,9 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'dart:convert';
 
+import 'package:bloc/bloc.dart';
+import 'package:bloc_project/repo/project_repo.dart';
+import 'package:equatable/equatable.dart';
+import 'package:http/http.dart' as http;
 part 'counter_event.dart';
 part 'counter_state.dart';
 
@@ -11,6 +14,8 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
     on<SwitchButton>(_switchButton);
     on<DropDownValue>(_dropDownValue);
     on<SignInfiledCheck>(_signInfiledCheck);
+
+    on<Login>(_login);
   }
 
   void _incrementcounter(Increment event, Emitter<CounterState> emit) {
@@ -30,10 +35,47 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
   }
 
   void _signInfiledCheck(SignInfiledCheck event, Emitter<CounterState> emit) {
-    if (event.email == "") {
-      emit(state.copyWith(error: "dnkjnkk;"));
+    if (event.email == "" && event.email!.length > 8) {
+      emit(state.copyWith(error: "Please Enter Email"));
+    } else if (event.password == "") {
+      emit(state.copyWith(error: "Please Enter Password"));
     } else {
-      emit(state.copyWith(email: event.email));
+      emit(state.copyWith(email: event.email, pasword: event.password));
+    }
+  }
+
+  void _login(Login event, Emitter<CounterState> emit) async {
+    emit(
+      state.copyWith(postapistatus: Postapistatus.loading),
+    );
+    Map data = {'email': state.email, 'password': state.pasword};
+
+    try {
+      final response =
+          await http.post(Uri.parse('https://reqres.in/api/login'), body: data);
+      var data1 = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        emit(
+          state.copyWith(
+            postapistatus: Postapistatus.success,
+            error: 'Login successful',
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            postapistatus: Postapistatus.error,
+            error: data1['error'],
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          postapistatus: Postapistatus.error,
+          error: e.toString(),
+        ),
+      );
     }
   }
 }

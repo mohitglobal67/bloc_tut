@@ -15,13 +15,13 @@ class SwitchButton extends CounterEvent {}
 
 class DropDownValue extends CounterEvent {
   final String selecteddata;
-
   const DropDownValue(this.selecteddata);
 }
 
 class SignInfiledCheck extends CounterEvent {
   final String? email;
   final String? password;
-
-  SignInfiledCheck(this.email, this.password);
+  const SignInfiledCheck(this.email, this.password);
 }
+
+class Login extends CounterEvent {}
